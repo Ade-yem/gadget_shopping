@@ -22,7 +22,7 @@ contract GadgetShop {
     mapping (address => uint256) public buyers;
     mapping (address => uint256) public sellers;
     mapping (bytes32 => Product) public products;
-    mapping (address => Product) public boughtProduct;
+    mapping (address => Product) public boughtProduct; // maps buyer to the bought product
 
     uint256 public commission_rate;
     Product[] public productList;
@@ -37,7 +37,15 @@ contract GadgetShop {
         commission_rate = rate;
     }
 
-    function withdraw() public {
+    modifier onlyOwner {
+        if (msg.sender != owner) {
+            revert("You cannot do this!");
+        }
+        _;
+    }
+
+
+    function withdraw() public onlyOwner {
         payable(owner).transfer(address(this).balance);
         emit Withdrawal(address(this).balance, block.timestamp);
     }
